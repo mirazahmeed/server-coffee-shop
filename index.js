@@ -57,13 +57,17 @@ async function run() {
 			const updateCoffee = req.body;
 			const updateDoc = {
 				$set: {
-					...updateCoffee
+					...updateCoffee,
 				},
 			};
-			const result = await coffeesCollection.updateOne(query, updateDoc, options);
+			const result = await coffeesCollection.updateOne(
+				query,
+				updateDoc,
+				options
+			);
 			res.send(result);
 		});
-		
+
 		app.delete("/coffees/:id", async (req, res) => {
 			const id = req.params.id;
 			const query = { _id: new ObjectId(id) };
