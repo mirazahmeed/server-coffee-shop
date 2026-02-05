@@ -10,6 +10,9 @@ console.log(process.env.DB_USER);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.7cdmalj.mongodb.net/?appName=Cluster0`;
 
+app.use(cors());
+app.use(express.json());
+
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
 	serverApi: {
@@ -64,7 +67,7 @@ async function run() {
 			const result = await coffeesCollection.updateOne(
 				query,
 				updateDoc,
-				options
+				options,
 			);
 			res.send(result);
 		});
@@ -90,15 +93,14 @@ async function run() {
 		});
 
 		app.patch("/users", async (req, res) => {
-			const {email, lastSignInTime} = req.body;
-			const filter = {email : email}
+			const { email, lastSignInTime } = req.body;
+			const filter = { email: email };
 			const updateDoc = {
-				$set:{
-					lastSignInTime : lastSignInTime
-				}
-			}
-			const result = await usersCollection.updateOne(filter, updateDoc)
-			
+				$set: {
+					lastSignInTime: lastSignInTime,
+				},
+			};
+			const result = await usersCollection.updateOne(filter, updateDoc);
 		});
 
 		app.delete("/users/:id", async (req, res) => {
@@ -111,7 +113,7 @@ async function run() {
 		// Send a ping to confirm a successful connection
 		await client.db("admin").command({ ping: 1 });
 		console.log(
-			"Pinged your deployment. You successfully connected to MongoDB!"
+			"Pinged your deployment. You successfully connected to MongoDB!",
 		);
 	} finally {
 		// Ensures that the client will close when you finish/error
@@ -119,9 +121,6 @@ async function run() {
 	}
 }
 run().catch(console.dir);
-
-app.use(cors());
-app.use(express.json());
 
 app.get("/", (req, res) => {
 	res.send("Hello World!");
